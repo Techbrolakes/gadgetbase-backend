@@ -4,7 +4,7 @@
   "description": "Gadgetbase Backend Codebase",
   "main": "server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node build/server.js",
     "dev": "concurrently \"nodemon --exec node --trace-warnings -r ts-node/register source/server.ts\" \"npm run build\"",
     "test": "npm run test",
     "lint": "eslint . --fix",
