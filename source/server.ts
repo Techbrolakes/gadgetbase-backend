@@ -8,7 +8,7 @@ import userRoutes from './routes/user.route';
 export interface ExpressRequest extends Request {
     user?: IUserDocument;
 }
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4040;
 
 const app = express();
 app.use(cors());

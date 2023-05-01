@@ -8,5 +8,8 @@ import { IUserDocument } from '../interfaces/user.interface';
 import { OtpSchema } from './otp.model';
 import { IOtpDocument } from '../interfaces/otp.interface';
 
+// PRODUCT
+import { ProductSchema } from './product.model';
+
 export const Otp = model<IOtpDocument>('Otps', OtpSchema);
 export const User = model<IUserDocument>('Users', UserSchema);

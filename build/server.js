@@ -8,7 +8,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const conn_1 = __importDefault(require("./config/conn"));
 const cors_1 = __importDefault(require("cors"));
 const user_route_1 = __importDefault(require("./routes/user.route"));
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4040;
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
