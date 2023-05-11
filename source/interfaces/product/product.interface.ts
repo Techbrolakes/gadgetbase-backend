@@ -7,7 +7,6 @@ export interface IProduct {
    product_image?: string;
    product_category?: string;
    product_quantity?: number;
-   product_rating?: number;
 }
 
 export interface IProductDocument extends IProduct, Document {}
