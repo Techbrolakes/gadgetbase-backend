@@ -8,7 +8,6 @@ import auth from '../middlewares/auth.middleware';
 const router = express.Router();
 
 router.post('/register', UserValidations.registerUser, UserControllers.registerUser);
-router.post('/verify-email', UserValidations.VerifyEmail, UserControllers.verifyEmail);
 router.post('/resend', UserValidations.resendVerification, UserControllers.resendVerification);
 router.post('/login', UserValidations.loginUser, UserControllers.loginUser);
 router.post('/recover', UserValidations.recoverPassword, UserControllers.recoverPassword);
