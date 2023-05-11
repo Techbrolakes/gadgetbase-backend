@@ -3,7 +3,6 @@ import { ExpressRequest } from '../server';
 import { IRegister, IVerifyMail } from '../interfaces/user.interface';
 import ResponseHandler from '../utils/response-handler';
 import userService from '../services/user.service';
-import { Types } from 'mongoose';
 import UtilsFunc from '../utils';
 import { sendPasswordRecoveryEmail, sendWelcomeEmail } from '../services/mail.service';
 import otpService from '../services/otp.service';
@@ -47,6 +46,7 @@ export const resetPassword = async (req: ExpressRequest, res: Response): Promise
  */
 export const verifyOTP = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    const { email, otp }: { email: string; otp: number } = req.body;
+
    try {
       const user = await userService.getByEmail({ email: email.toLowerCase() });
 
@@ -85,7 +85,9 @@ export const verifyOTP = async (req: ExpressRequest, res: Response): Promise<Res
 export const recoverPassword = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {
       const { email }: { email: string } = req.body;
+
       const user = await userService.getByEmail({ email: email.toLowerCase() });
+
       if (!user) return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'Email does not exist' });
 
       const otp = await UtilsFunc.generateOtp({ user_id: user._id });
@@ -117,16 +119,25 @@ export const recoverPassword = async (req: ExpressRequest, res: Response): Promi
 export const loginUser = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    const { email, password } = req.body;
    try {
+      // check if user exists
       const user = await userService.getByEmail({ email: email.toLowerCase() });
-      if (!user) return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'Email does not exist' });
+
+      // if user does not exist
+      if (!user) return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'Email not found. Please enter a valid email address.' });
+
+      // check if password is correct
       const result = bcrypt.compareSync(password, user?.password!);
+
+      // if password is incorrect
       if (!result) {
          return ResponseHandler.sendErrorResponse({
             res,
             code: 400,
-            error: 'Password is incorrect',
+            error: 'Incorrect password. Please try again.',
          });
       }
+
+      // Generate token
       const token = await UtilsFunc.generateToken({
          _id: user._id,
          first_name: user.first_name,
@@ -155,7 +166,7 @@ export const resendVerification = async (req: ExpressRequest, res: Response): Pr
       const user = await userService.getByEmail({ email: email.toLowerCase() });
 
       // if user does not exist
-      if (!user) return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'Email does not exist' });
+      if (!user) return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'Email not found. Please enter a valid email address.' });
 
       // generate otp
       const otp = await UtilsFunc.generateOtp({ user_id: user._id });

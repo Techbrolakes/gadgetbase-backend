@@ -44,7 +44,7 @@ export const resetPassword = async (req: ExpressRequest, res: Response): Promise
          return ResponseHandler.sendSuccessResponse({
             res,
             code: 200,
-            message: 'User Successfully updated',
+            message: 'Information updated',
          });
       }
    } catch (error) {
@@ -68,7 +68,7 @@ export const editProfile = async (req: ExpressRequest, res: Response): Promise<R
          return ResponseHandler.sendSuccessResponse({
             res,
             code: 200,
-            message: 'User Successfully updated',
+            message: 'Information updated',
             data: user,
          });
       }
@@ -92,12 +92,12 @@ export const getAllUsers = async (req: ExpressRequest, res: Response): Promise<R
          return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
       }
 
-      const profile = await userService.getByQuery({ _id: user._id }, 'first_name last_name email  gender address');
+      const profile = await userService.getByQuery({ _id: user._id }, 'first_name last_name email address');
 
       return ResponseHandler.sendSuccessResponse({
          res,
          code: 200,
-         message: 'User Successfully fetched',
+         message: 'User data successfully retrieved',
          data: profile,
       });
    } catch (error) {
