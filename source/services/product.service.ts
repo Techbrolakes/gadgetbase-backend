@@ -5,6 +5,15 @@ import { IProduct, IProductDocument } from '../interfaces/product/product.interf
 import UtilsFunc from '../utils';
 
 class ProductService {
+   // Delete product
+   public async deleteProduct(product_id: Types.ObjectId): Promise<IProductDocument | null | any> {
+      return await Product.findByIdAndDelete({ _id: product_id });
+   }
+
+   // Update product
+   public async atomicUpdate(product_id: Types.ObjectId, record: any) {
+      return Product.findOneAndUpdate({ _id: product_id }, { ...record }, { new: true });
+   }
    // Create product category
    public async createProductCategory({ category_description, category_image, category_name }: IProductCategory): Promise<IProductCategoryDocument | null | any> {
       const data = {
@@ -40,13 +49,18 @@ class ProductService {
    }
 
    // Get product category by id
-   public async getCategoryById({ _id }: { _id: Types.ObjectId }): Promise<IProductCategoryDocument | null | any> {
-      return await ProductCategory.findById(_id);
+   public async getCategoryById({ category_id }: { category_id: Types.ObjectId }): Promise<IProductCategoryDocument | null | any> {
+      return await Product.find({ category_id: category_id }).sort({ createdAt: -1 });
    }
 
    // Get product by id
    public async getProductById({ product_id }: { product_id: Types.ObjectId }): Promise<IProductDocument | null> {
       return await Product.findById(product_id);
+   }
+
+   // Get all product categories
+   public async getProductCategories(): Promise<IProductCategoryDocument[] | null> {
+      return await ProductCategory.find();
    }
 
    // Find by product category name
