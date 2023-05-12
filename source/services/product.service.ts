@@ -61,6 +61,12 @@ class ProductService {
    public async getDistinctValues(fieldName: string): Promise<any> {
       return await Product.distinct(fieldName);
    }
+
+   // GET distinct values for a given field by category id
+   public async getDistinctValuesByCategoryId(fieldName: string, categoryId: Types.ObjectId): Promise<any> {
+      return await Product.distinct(fieldName, { category_id: categoryId });
+   }
+
    // Find By Product Name
    public getByProductName = async ({ product_name, leanVersion = true }: { product_name: string; leanVersion?: boolean }): Promise<IProductDocument> => {
       return await Product.findOne({ product_name }).lean(leanVersion);

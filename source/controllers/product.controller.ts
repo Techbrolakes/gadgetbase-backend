@@ -83,11 +83,47 @@ export const getAllProductBrands = async (req: ExpressRequest, res: Response): P
    try {
       const productBrands = await productService.getDistinctValues('product_brand');
 
+      const existingProductBrands = productBrands.filter((productBrand: any) => productBrand !== null);
+
+      if (existingProductBrands.length === 0) {
+         return ResponseHandler.sendErrorResponse({ res, code: HTTP_CODES.NOT_FOUND, error: 'No product brands found' });
+      }
+
       // Return response
       return ResponseHandler.sendSuccessResponse({
          res,
          code: HTTP_CODES.OK,
          message: 'Product brands retrieved successfully',
+         data: productBrands,
+      });
+   } catch (error) {
+      // Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+// Get Unique Product Values By Category Id
+export const getProductBrandsByCategoryId = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const categoryId = req.params.category_id;
+
+      const existingCategory = await productService.getProductCategoryById({ category_id: new Types.ObjectId(categoryId) });
+
+      if (!existingCategory) {
+         return ResponseHandler.sendErrorResponse({ res, code: HTTP_CODES.BAD_REQUEST, error: 'Category Id Not Valid' });
+      }
+
+      const productBrands = await productService.getDistinctValuesByCategoryId('product_brand', new Types.ObjectId(categoryId));
+
+      // Return response
+      return ResponseHandler.sendSuccessResponse({
+         res,
+         code: HTTP_CODES.OK,
+         message: 'Product brands based on categories retrieved successfully',
          data: productBrands,
       });
    } catch (error) {
