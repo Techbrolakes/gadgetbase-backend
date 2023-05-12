@@ -78,6 +78,28 @@ export const createProduct = async (req: ExpressRequest, res: Response): Promise
    }
 };
 
+// Get Unique Product Values
+export const getAllProductBrands = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const productBrands = await productService.getDistinctValues('product_brand');
+
+      // Return response
+      return ResponseHandler.sendSuccessResponse({
+         res,
+         code: HTTP_CODES.OK,
+         message: 'Product brands retrieved successfully',
+         data: productBrands,
+      });
+   } catch (error) {
+      // Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
 // Get All Products
 export const getAllProducts = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {
@@ -143,7 +165,7 @@ export const getProductByCategory = async (req: ExpressRequest, res: Response): 
       const category_id = req.params.category_id;
 
       // Check if category id is provided
-      const category = await productService.getProductByCategoryId({ category_id: new Types.ObjectId(category_id) });
+      const category = await productService.getProductByCategoryId(req);
 
       // If category does not exist
 
@@ -392,7 +414,7 @@ export const deleteProductCategory = async (req: ExpressRequest, res: Response):
       }
 
       // Get all products with the category id
-      const productWithCategoryId = await productService.getProductByCategoryId({ category_id });
+      const productWithCategoryId = await productService.getProductByCategoryIdOnly({ category_id });
 
       // Delete the category
       const deleteCategory = await productService.deleteCategory(category_id);

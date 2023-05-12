@@ -17,15 +17,22 @@ class ProductService {
       const search = String(query.search) || '';
       const perpage = Number(query.perpage) || 10;
       const page = Number(query.page) || 1;
+      const brand = String(query.brand) || '';
+      const minPrice = Number(query.minPrice) || 0;
+      const maxPrice = Number(query.maxPrice) || Infinity;
       let filterQuery;
 
       if (search !== 'undefined' && Object.keys(search).length > 0) {
          filterQuery = {
-            $or: [{ product_name: new RegExp(search, 'i') }, { product_brand: new RegExp(search, 'i') }],
+            $or: [{ product_name: new RegExp(search, 'i') }],
          };
       }
 
-      const filter = { ...filterQuery };
+      if (brand !== 'undefined' && brand.length > 0) {
+         filterQuery = { ...filterQuery, product_brand: brand };
+      }
+
+      const filter = { ...filterQuery, product_price: { $gte: minPrice, $lte: maxPrice } };
 
       const [products, total] = await Promise.all([
          Product.find(filter)
@@ -50,6 +57,10 @@ class ProductService {
       return { data: products, pagination };
    }
 
+   // Get distinct values for a given field
+   public async getDistinctValues(fieldName: string): Promise<any> {
+      return await Product.distinct(fieldName);
+   }
    // Find By Product Name
    public getByProductName = async ({ product_name, leanVersion = true }: { product_name: string; leanVersion?: boolean }): Promise<IProductDocument> => {
       return await Product.findOne({ product_name }).lean(leanVersion);
@@ -103,8 +114,63 @@ class ProductService {
     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     */
 
-   // Get Product Category By Id
-   public async getProductByCategoryId({ category_id }: { category_id: Types.ObjectId }): Promise<IProductCategoryDocument | null | any> {
+   // Get Product Category By Id and filter & Paginate
+   public async getProductByCategoryId(req: ExpressRequest): Promise<IProductDocument[] | null | any> {
+      const { query, params } = req;
+      const categoryId = params.category_id;
+      const search = String(query.search) || '';
+      const brand = String(query.brand) || '';
+      const minPrice = Number(query.minPrice) || 0;
+      const maxPrice = Number(query.maxPrice) || Infinity;
+      const perpage = Number(query.perpage) || 10;
+      const page = Number(query.page) || 1;
+      let filterQuery: any = { category_id: new Types.ObjectId(categoryId) };
+
+      if (search !== 'undefined' && Object.keys(search).length > 0) {
+         filterQuery.$or = [{ product_name: new RegExp(search, 'i') }];
+      }
+
+      if (brand) {
+         filterQuery.product_brand = new RegExp(brand, 'i');
+      }
+
+      if (minPrice || maxPrice) {
+         filterQuery.product_price = {};
+         if (minPrice) {
+            filterQuery.product_price.$gte = minPrice;
+         }
+         if (maxPrice) {
+            filterQuery.product_price.$lte = maxPrice;
+         }
+      }
+
+      const filter = { ...filterQuery };
+
+      const [products, total] = await Promise.all([
+         Product.find(filter)
+            .lean(true)
+            .sort({ createdAt: -1 })
+            .limit(perpage)
+            .skip(page * perpage - perpage),
+         Product.aggregate([{ $match: filter }, { $count: 'count' }]),
+      ]);
+
+      const pagination = {
+         hasPrevious: page > 1,
+         prevPage: page - 1,
+         hasNext: page < Math.ceil(total[0]?.count / perpage),
+         next: page + 1,
+         currentPage: Number(page),
+         total: total[0]?.count || 0,
+         pageSize: perpage,
+         lastPage: Math.ceil(total[0]?.count / perpage),
+      };
+
+      return { data: products, pagination };
+   }
+
+   // Get Product Category By Id Only
+   public async getProductByCategoryIdOnly({ category_id }: { category_id: Types.ObjectId }): Promise<IProductCategoryDocument | null | any> {
       return await Product.find({ category_id: category_id }).sort({ createdAt: -1 });
    }
 
