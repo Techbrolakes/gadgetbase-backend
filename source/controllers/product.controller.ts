@@ -8,7 +8,7 @@ import { Types } from 'mongoose';
 
 /****
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
  * PRODUCT RELATED CONTROLLERS
@@ -69,6 +69,43 @@ export const createProduct = async (req: ExpressRequest, res: Response): Promise
          message: `${product_name} added to the database`,
          data: product,
       });
+   } catch (error) {
+      // Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+// Get Single Product
+export const getProduct = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      // Get product id
+      const product_id = req.params.product_id;
+
+      // Check if product id exists
+      if (!product_id) {
+         return ResponseHandler.sendErrorResponse({
+            res,
+            code: HTTP_CODES.BAD_REQUEST,
+            error: 'Product ID is required',
+         });
+      }
+
+      // Check if product exist
+      const product = await productService.getProductById({ product_id: new Types.ObjectId(product_id) });
+
+      if (product) {
+         // Return response
+         return ResponseHandler.sendSuccessResponse({
+            res,
+            code: HTTP_CODES.OK,
+            message: 'Product retrieved successfully',
+            data: product,
+         });
+      }
    } catch (error) {
       // Return error response
       ResponseHandler.sendErrorResponse({
