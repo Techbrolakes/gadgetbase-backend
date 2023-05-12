@@ -21,7 +21,7 @@ class ProductService {
 
       if (search !== 'undefined' && Object.keys(search).length > 0) {
          filterQuery = {
-            $or: [{ product_name: new RegExp(search, 'i') }],
+            $or: [{ product_name: new RegExp(search, 'i') }, { product_brand: new RegExp(search, 'i') }],
          };
       }
 
@@ -78,7 +78,7 @@ class ProductService {
    // Create product
    public async createProduct({
       category_id,
-      product_category,
+      product_brand,
       product_description,
       product_image,
       product_name,
@@ -87,7 +87,7 @@ class ProductService {
    }: IProduct): Promise<IProductDocument | null | any> {
       const data = {
          category_id,
-         product_category,
+         product_brand,
          product_description,
          product_image,
          product_name,

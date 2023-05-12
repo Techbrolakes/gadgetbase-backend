@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { ExpressRequest } from '../server';
 import ResponseHandler from '../utils/response-handler';
-import UtilsFunc from '../utils';
 import { HTTP_CODES } from '../constants';
 import productService from '../services/product.service';
 import { Types } from 'mongoose';
@@ -20,7 +19,7 @@ import { Types } from 'mongoose';
 // Create Product Controller For Admin
 export const createProduct = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {
-      const { category_id, product_name, product_price, product_description, product_image, product_category, product_quantity } = req.body;
+      const { category_id, product_name, product_price, product_description, product_image, product_brand, product_quantity } = req.body;
 
       // Check if category_id is provided
       if (!category_id) {
@@ -58,7 +57,7 @@ export const createProduct = async (req: ExpressRequest, res: Response): Promise
          product_price,
          product_description,
          product_image,
-         product_category,
+         product_brand,
          product_quantity,
       });
 
@@ -172,7 +171,7 @@ export const getProductByCategory = async (req: ExpressRequest, res: Response): 
 // Update Product
 export const updateProduct = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {
-      const { category_id, product_name, product_price, product_description, product_image, product_category, product_quantity } = req.body;
+      const { category_id, product_name, product_price, product_description, product_image, product_brand, product_quantity } = req.body;
 
       // Check if product id is provided
       const product_id = new Types.ObjectId(req.params.product_id);
@@ -196,7 +195,7 @@ export const updateProduct = async (req: ExpressRequest, res: Response): Promise
             product_price,
             product_description,
             product_image,
-            product_category,
+            product_brand,
             product_quantity,
             category_id: new Types.ObjectId(category_id),
          },

@@ -27,7 +27,7 @@ export const createProduct = async (req: ExpressRequest, res: Response, next: Ne
          product_price: Joi.number().required(),
          product_description: Joi.string().required(),
          product_image: Joi.string().required(),
-         product_category: Joi.string().required(),
+         product_brand: Joi.string().required(),
          product_quantity: Joi.number().required(),
       })
       .unknown();

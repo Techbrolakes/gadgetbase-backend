@@ -7,7 +7,7 @@ export const ProductSchema: Schema = new Schema(
       product_price: { type: Number, required: true },
       product_description: { type: String, required: true },
       product_image: { type: String, required: true },
-      product_category: { type: String, required: true },
+      product_brand: { type: String, required: true },
       product_quantity: { type: Number, required: true },
    },
    {
