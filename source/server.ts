@@ -4,6 +4,7 @@ import connectDB from './config/conn';
 import cors from 'cors';
 import { IUserDocument } from './interfaces/user.interface';
 import userRoutes from './routes/user.route';
+import productRoutes from './routes/product.route';
 
 export interface ExpressRequest extends Request {
    user?: IUserDocument;
@@ -16,6 +17,7 @@ app.use(express.json());
 dotenv.config();
 
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/product', productRoutes);
 
 app.get('/', (req, res) => {
    res.send('Hello World!');
