@@ -9,6 +9,102 @@ import { Types } from 'mongoose';
 /****
  *
  *
+ *  Update Category
+ */
+
+export const updateProductCategory = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const { category_description, category_image, category_name } = req.body;
+
+      const category_id = new Types.ObjectId(req.params.category_id);
+
+      const category = await productService.getProductCategoryById({ category_id });
+
+      if (!category) {
+         return ResponseHandler.sendErrorResponse({
+            code: HTTP_CODES.NOT_FOUND,
+            error: 'Category does not exist',
+            res,
+         });
+      }
+
+      const updatedCategory = await productService.atomicCategoryUpdate(category_id, {
+         $set: {
+            category_description,
+            category_image,
+            category_name,
+         },
+      });
+
+      return ResponseHandler.sendSuccessResponse({
+         res,
+         code: HTTP_CODES.OK,
+         message: 'Category updated successfully',
+         data: updatedCategory,
+      });
+   } catch (error) {
+      return ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+/****
+ *
+ *
+ *  Delete Category
+ */
+
+export const deleteProductCategory = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const category_id = new Types.ObjectId(req.params.category_id);
+
+      // Check if the category exists
+      const existingCategory = await productService.getProductCategoryById({ category_id });
+
+      // If the category does not exist
+      if (!existingCategory) {
+         return ResponseHandler.sendErrorResponse({
+            code: HTTP_CODES.NOT_FOUND,
+            error: 'Category does not exist',
+            res,
+         });
+      }
+
+      // Get all products with the category id
+      const productWithCategoryId = await productService.getProductByCategoryId({ category_id });
+
+      // Delete the category
+      const deleteCategory = await productService.deleteCategory(category_id);
+
+      // Delete all the products with the category id
+      if (deleteCategory) {
+         if (productWithCategoryId.length > 0) {
+            for (let i = 0; i < productWithCategoryId.length; i++) {
+               await productService.deleteProduct(productWithCategoryId[i]._id);
+            }
+         }
+      }
+
+      return ResponseHandler.sendSuccessResponse({
+         res,
+         code: HTTP_CODES.OK,
+         message: 'Category successfully deleted with all the products in it ',
+      });
+   } catch (error) {
+      return ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+/****
+ *
+ *
  *  Delete Product
  */
 
@@ -99,7 +195,7 @@ export const updateProduct = async (req: ExpressRequest, res: Response): Promise
 export const getProductByCategory = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {
       const category_id = req.params.category_id;
-      const category = await productService.getCategoryById({ category_id: new Types.ObjectId(category_id) });
+      const category = await productService.getProductByCategoryId({ category_id: new Types.ObjectId(category_id) });
 
       console.log(category);
 
@@ -201,9 +297,19 @@ export const createProduct = async (req: ExpressRequest, res: Response): Promise
          });
       }
 
-      const existingCategoryName = await productService.getByProductName({ product_name: product_name.toLowerCase() });
+      const existingCategory = await productService.getProductCategoryById({ category_id: new Types.ObjectId(category_id) });
 
-      if (existingCategoryName) {
+      if (!existingCategory) {
+         return ResponseHandler.sendErrorResponse({
+            res,
+            code: HTTP_CODES.NOT_FOUND,
+            error: 'Category does not exist',
+         });
+      }
+
+      const existingProductName = await productService.getByProductName({ product_name: product_name.toLowerCase() });
+
+      if (existingProductName) {
          return ResponseHandler.sendErrorResponse({ res, code: HTTP_CODES.BAD_REQUEST, error: `${product_name} already exist in the database` });
       }
 

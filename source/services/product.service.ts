@@ -5,6 +5,19 @@ import { IProduct, IProductDocument } from '../interfaces/product/product.interf
 import UtilsFunc from '../utils';
 
 class ProductService {
+   // Update product category
+   public async atomicCategoryUpdate(category_id: Types.ObjectId, record: any) {
+      return ProductCategory.findOneAndUpdate({ _id: category_id }, { ...record }, { new: true });
+   }
+   // Get Product Category by id
+   public async getProductCategoryById({ category_id }: { category_id: Types.ObjectId }): Promise<IProductCategoryDocument | null | any> {
+      return await ProductCategory.findById(category_id);
+   }
+   // Delete product
+   public async deleteCategory(category_id: Types.ObjectId): Promise<IProductCategoryDocument | null | any> {
+      return await ProductCategory.findByIdAndDelete({ _id: category_id });
+   }
+
    // Delete product
    public async deleteProduct(product_id: Types.ObjectId): Promise<IProductDocument | null | any> {
       return await Product.findByIdAndDelete({ _id: product_id });
@@ -49,7 +62,7 @@ class ProductService {
    }
 
    // Get product category by id
-   public async getCategoryById({ category_id }: { category_id: Types.ObjectId }): Promise<IProductCategoryDocument | null | any> {
+   public async getProductByCategoryId({ category_id }: { category_id: Types.ObjectId }): Promise<IProductCategoryDocument | null | any> {
       return await Product.find({ category_id: category_id }).sort({ createdAt: -1 });
    }
 

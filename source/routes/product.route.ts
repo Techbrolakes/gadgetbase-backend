@@ -5,11 +5,16 @@ import * as ProductValidations from '../validations/product.validation';
 
 const router = express.Router();
 
+// Products based routes
 router.post('/create-product', auth, ProductControllers.createProduct, ProductValidations.createProduct);
+router.put('/update-product/:product_id', auth, ProductControllers.updateProduct);
+router.delete('/delete-product/:product_id', auth, ProductControllers.deleteProduct);
+
+// Categories based routes
 router.post('/create-product-category', auth, ProductControllers.createProductCategory, ProductValidations.createProductCategory);
 router.get('/get-product-categories', ProductControllers.getProductCategories);
 router.get('/get-product-category/:category_id', ProductControllers.getProductByCategory);
-router.put('/edit-product/:product_id', auth, ProductControllers.updateProduct);
-router.delete('/delete-product/:product_id', auth, ProductControllers.deleteProduct);
+router.delete('/delete-product-category/:category_id', auth, ProductControllers.deleteProductCategory);
+router.put('/update-product-category/:category_id', auth, ProductControllers.updateProductCategory);
 
 export default router;
