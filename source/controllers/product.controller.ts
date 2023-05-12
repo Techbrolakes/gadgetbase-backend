@@ -79,6 +79,27 @@ export const createProduct = async (req: ExpressRequest, res: Response): Promise
    }
 };
 
+// Get All Products
+export const getAllProducts = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const products = await productService.getProducts(req);
+
+      // Return response
+      return ResponseHandler.sendSuccessResponse({
+         res,
+         code: HTTP_CODES.OK,
+         message: 'Products retrieved successfully',
+         data: products,
+      });
+   } catch (error) {
+      // Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
 // Get Single Product
 export const getProduct = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {

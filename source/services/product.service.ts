@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import { Product, ProductCategory } from '../models';
 import { IProductCategory, IProductCategoryDocument } from '../interfaces/product/product-category.interface';
 import { IProduct, IProductDocument } from '../interfaces/product/product.interface';
+import { ExpressRequest } from '../server';
 
 class ProductService {
    /****
@@ -9,6 +10,45 @@ class ProductService {
     * PRODUCT RELATED SERVICES
     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     */
+
+   // Get All Products
+   public async getProducts(req: ExpressRequest): Promise<IProductDocument[] | null | any> {
+      const { query } = req;
+      const search = String(query.search) || '';
+      const perpage = Number(query.perpage) || 10;
+      const page = Number(query.page) || 1;
+      let filterQuery;
+
+      if (search !== 'undefined' && Object.keys(search).length > 0) {
+         filterQuery = {
+            $or: [{ product_name: new RegExp(search, 'i') }],
+         };
+      }
+
+      const filter = { ...filterQuery };
+
+      const [products, total] = await Promise.all([
+         Product.find(filter)
+            .lean(true)
+            .sort({ createdAt: -1 })
+            .limit(perpage)
+            .skip(page * perpage - perpage),
+         Product.aggregate([{ $match: filter }, { $count: 'count' }]),
+      ]);
+
+      const pagination = {
+         hasPrevious: page > 1,
+         prevPage: page - 1,
+         hasNext: page < Math.ceil(total[0]?.count / perpage),
+         next: page + 1,
+         currentPage: Number(page),
+         total: total[0]?.count || 0,
+         pageSize: perpage,
+         lastPage: Math.ceil(total[0]?.count / perpage),
+      };
+
+      return { data: products, pagination };
+   }
 
    // Find By Product Name
    public getByProductName = async ({ product_name, leanVersion = true }: { product_name: string; leanVersion?: boolean }): Promise<IProductDocument> => {
