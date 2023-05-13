@@ -26,6 +26,11 @@ class AddressService {
    }
 
    // find an address
+   public async find(query: any, populate: string = ''): Promise<IAddressDocument | null | any> {
+      return await Address.find(query).populate(populate).sort({ createdAt: -1 });
+   }
+
+   // find an address
    public async getOne(query: any): Promise<IAddressDocument | null> {
       return Address.findOne({ ...query });
    }

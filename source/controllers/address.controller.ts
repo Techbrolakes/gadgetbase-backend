@@ -49,6 +49,48 @@ export const getUserAddresses = async (req: ExpressRequest, res: Response): Prom
    }
 };
 
+// Get Single Address
+export const getAddress = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      // check if user exists
+      const getUser = await userService.getById({ _id: user._id });
+
+      // When user does not exist
+      if (!getUser) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
+      }
+
+      // Check if product id is provided
+      const address_id = new Types.ObjectId(req.params.address_id);
+
+      // check if address exists
+      const getAddress = await addressService.find({
+         $and: [{ user_id: user._id }, { _id: address_id }],
+      });
+
+      // When address does not exist
+      if (!getAddress) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'Address does not exist' });
+      }
+
+      // Return success response
+      ResponseHandler.sendSuccessResponse({
+         res,
+         message: 'Address retrieved successfully',
+         data: getAddress,
+      });
+   } catch (error) {
+      // Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
 // Create Profile Address
 export const createAddress = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {

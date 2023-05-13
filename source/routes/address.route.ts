@@ -8,6 +8,7 @@ const router = express.Router();
 // Address based routes
 router.post('/create-address', auth, AddressValidations.createAddress, AddressControllers.createAddress);
 router.get('/get-addresses', auth, AddressControllers.getUserAddresses);
+router.get('/get-address/:address_id', auth, AddressControllers.getAddress);
 router.put('/update-address/:address_id', auth, AddressControllers.updateAddress);
 router.delete('/delete-address/:address_id', auth, AddressControllers.deleteAddress);
 
