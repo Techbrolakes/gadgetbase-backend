@@ -15,7 +15,7 @@ router.post('/verify-otp', UserValidations.verifyOTP, UserControllers.verifyOTP)
 router.post('/reset-password', UserValidations.resetPassword, UserControllers.resetPassword);
 
 // Profile Routes - User Management
-router.get('/get', auth, UserProfile.getAllUsers);
+router.get('/get', auth, UserProfile.getUserDetails);
 router.put('/edit', auth, UserProfile.editProfile);
 router.post('/reset', auth, ProfileValidations.validateResetPassword, UserProfile.resetPassword);
 

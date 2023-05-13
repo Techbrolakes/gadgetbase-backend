@@ -33,6 +33,10 @@ class UserService {
    public async atomicUpdate(user_id: Types.ObjectId, record: any, session: any = null) {
       return User.findOneAndUpdate({ _id: user_id }, { ...record }, { new: true, session });
    }
+   // Find a user by id and update all
+   public async updateAll(query: any, record: any): Promise<IUserDocument | null | any> {
+      return await User.updateMany({ ...query }, { ...record }, { new: true });
+   }
 }
 
 export default new UserService();

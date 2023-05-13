@@ -16,7 +16,12 @@ import { IProductDocument } from '../interfaces/product/product.interface';
 import { ProductCategorySchema } from './product/product-category.model';
 import { IProductCategoryDocument } from '../interfaces/product/product-category.interface';
 
+// USER ADDRESS
+import { AddressSchema } from './address/address.model';
+import { IAddressDocument } from '../interfaces/address/address.interface';
+
 export const Otp = model<IOtpDocument>('Otps', OtpSchema);
 export const User = model<IUserDocument>('Users', UserSchema);
 export const Product = model<IProductDocument>('Products', ProductSchema);
 export const ProductCategory = model<IProductCategoryDocument>('ProductCategories', ProductCategorySchema);
+export const Address = model<IAddressDocument>('Addresses', AddressSchema);
