@@ -7,6 +7,7 @@ export const UserSchema: Schema = new Schema(
       email: { type: String, required: true, index: true, unique: true, lowercase: true },
       password: { type: String },
       phone_number: { type: String },
+      admin: { type: Boolean, default: false },
    },
    { timestamps: true },
 );
