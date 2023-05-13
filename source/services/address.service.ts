@@ -21,8 +21,8 @@ class AddressService {
    }
 
    // Deletes an address
-   public async deleteOne(query: any): Promise<IAddressDocument | null> {
-      return Address.findOneAndDelete({ ...query });
+   public async deleteById(address_id: Types.ObjectId): Promise<IAddressDocument | null> {
+      return Address.findByIdAndDelete({ _id: address_id });
    }
 
    // find an address

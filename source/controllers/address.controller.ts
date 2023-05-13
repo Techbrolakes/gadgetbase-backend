@@ -3,8 +3,6 @@ import { ExpressRequest } from '../server';
 import ResponseHandler from '../utils/response-handler';
 import UtilsFunc from '../utils';
 import userService from '../services/user.service';
-import { User } from '../models';
-import bcrypt from 'bcrypt';
 import { HTTP_CODES } from '../constants';
 import addressService from '../services/address.service';
 import { Types } from 'mongoose';
@@ -151,6 +149,49 @@ export const updateAddress = async (req: ExpressRequest, res: Response): Promise
          res,
          message: 'Address updated successfully',
          data: updatedAddress,
+      });
+   } catch (error) {
+      // Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+// Delete Profile Address
+export const deleteAddress = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      // check if user exists
+      const getUser = await userService.getById({ _id: user._id });
+
+      // When user does not exist
+      if (!getUser) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
+      }
+
+      // Check if product id is provided
+      const address_id = new Types.ObjectId(req.params.address_id);
+
+      // check if address exists
+      const getAddress = await addressService.getAddressById({ address_id });
+
+      // When address does not exist
+      if (!getAddress) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'Address does not exist' });
+      }
+
+      // Delete address
+      const deletedAddress = await addressService.deleteById(address_id);
+
+      // Return success response
+      ResponseHandler.sendSuccessResponse({
+         res,
+         message: 'Address deleted successfully',
+         data: deletedAddress,
       });
    } catch (error) {
       // Return error response
