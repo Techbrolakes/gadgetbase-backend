@@ -49,6 +49,32 @@ export const getUserAddresses = async (req: ExpressRequest, res: Response): Prom
    }
 };
 
+// Make Address Default
+export const makeAddressDefault = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      const address = await addressService.getOne({ _id: req.params.address_id });
+
+      await addressService.updateAll({ user_id: user._id }, { $set: { primary: false } });
+
+      const update = await addressService.updateOne({ _id: req.params.address_id }, { $set: { primary: true } });
+
+      // Return success response
+      ResponseHandler.sendSuccessResponse({
+         res,
+         message: 'Default address updated successfully',
+         data: update,
+      });
+   } catch (error) {
+      // Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
 // Get Single Address
 export const getAddress = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
    try {
