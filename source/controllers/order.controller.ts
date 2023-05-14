@@ -24,7 +24,7 @@ import { IStatus } from '../interfaces/order/order.interface';
 // Create New Order
 export const createNewOrder = async (data: any): Promise<any> => {
    try {
-      const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products, session } = data;
+      const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products } = data;
 
       const orderProducts: {
          product_id: Types.ObjectId;
@@ -43,16 +43,16 @@ export const createNewOrder = async (data: any): Promise<any> => {
       }
 
       const order = await orderService.createOrder({
-         user_id,
-         first_name,
-         last_name,
-         phone_number,
-         additional_phone_number,
-         additional_info,
-         city,
-         address,
+         user_id: user_id,
+         first_name: first_name,
+         last_name: last_name,
+         phone_number: phone_number,
+         additional_phone_number: additional_phone_number,
+         additional_info: additional_info,
+         city: city,
+         address: address,
          products: orderProducts,
-         total_price,
+         total_price: total_price,
          status: IStatus.pending,
          session: data.session,
       });
