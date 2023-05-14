@@ -2,8 +2,8 @@
    "name": "gadgetbase-backend",
    "version": "1.0.0",
    "description": "Gadgetbase Backend Codebase",
-   "main": "server.js",
    "scripts": {
+      "start": "node build/server.js",
       "build": "tsc && node build/server.js",
       "dev": "nodemon --exec ts-node --files source/server.ts --transpile-only",
       "test": "npm run test",
