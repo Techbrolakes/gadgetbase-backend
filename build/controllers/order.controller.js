@@ -11,6 +11,7 @@ const user_service_1 = __importDefault(require("../services/user.service"));
 const paystack_1 = require("../integrations/paystack");
 const product_service_1 = __importDefault(require("../services/product.service"));
 const order_service_1 = __importDefault(require("../services/order.service"));
+const order_interface_1 = require("../interfaces/order/order.interface");
 const createNewOrder = async (data) => {
     try {
         const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products } = data;
@@ -32,6 +33,7 @@ const createNewOrder = async (data) => {
             address,
             products: orderProducts,
             total_price,
+            status: order_interface_1.IStatus.pending,
         });
         return {
             success: true,

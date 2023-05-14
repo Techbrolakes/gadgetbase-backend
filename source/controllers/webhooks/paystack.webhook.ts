@@ -21,7 +21,6 @@ export const paystackWebhook = async (req: ExpressRequest, res: Response) => {
          const hash = crypto.createHmac('sha512', String(process.env.PAYSTACK_SECRET_KEY)).update(JSON.stringify(req.body)).digest('hex');
 
          const { id, reference, metadata } = req.body.data;
-
          if (hash !== req.headers['x-paystack-signature']) {
             return ResponseHandler.sendErrorResponse({
                res,
@@ -58,8 +57,6 @@ export const paystackWebhook = async (req: ExpressRequest, res: Response) => {
                };
 
                const result = await createNewOrder(payload);
-
-               console.log('It got here');
 
                if (!result.success) {
                   await session.abortTransaction();

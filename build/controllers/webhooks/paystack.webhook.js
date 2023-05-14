@@ -49,7 +49,6 @@ const paystackWebhook = async (req, res) => {
                         products: data.metadata.products,
                     };
                     const result = await (0, order_controller_1.createNewOrder)(payload);
-                    console.log('It got here');
                     if (!result.success) {
                         await session.abortTransaction();
                         return response_handler_1.default.sendErrorResponse({

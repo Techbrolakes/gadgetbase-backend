@@ -8,6 +8,7 @@ import userService from '../services/user.service';
 import { paystackAPI } from '../integrations/paystack';
 import productService from '../services/product.service';
 import orderService from '../services/order.service';
+import { IStatus } from '../interfaces/order/order.interface';
 
 /****
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -52,6 +53,7 @@ export const createNewOrder = async (data: any): Promise<any> => {
          address,
          products: orderProducts,
          total_price,
+         status: IStatus.pending,
       });
 
       return {

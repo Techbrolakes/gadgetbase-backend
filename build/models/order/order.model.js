@@ -35,7 +35,7 @@ exports.OrderSchema = new mongoose_1.Schema({
     city: { type: String, required: true },
     address: { type: String, required: true },
     additional_info: { type: String },
-    status: { type: String, enum: Object.values(order_interface_1.IStatus), required: true, default: order_interface_1.IStatus.pending },
+    status: { type: String, enum: Object.values(order_interface_1.IStatus), required: false, default: order_interface_1.IStatus.pending },
     products: [
         {
             product_id: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Product', required: true },
