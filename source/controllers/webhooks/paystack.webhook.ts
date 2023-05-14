@@ -58,6 +58,9 @@ export const paystackWebhook = async (req: ExpressRequest, res: Response) => {
                };
 
                const result = await createNewOrder(payload);
+
+               console.log('It got here');
+
                if (!result.success) {
                   await session.abortTransaction();
 

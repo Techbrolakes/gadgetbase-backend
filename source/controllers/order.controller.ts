@@ -41,7 +41,7 @@ export const createNewOrder = async (data: any): Promise<any> => {
          await productService.atomicUpdate(product_id, { $inc: { quantity: -quantity } });
       }
 
-      const order = orderService.createOrder({
+      const order = await orderService.createOrder({
          user_id,
          first_name,
          last_name,
