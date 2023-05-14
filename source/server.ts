@@ -6,6 +6,7 @@ import { IUserDocument } from './interfaces/user.interface';
 import userRoutes from './routes/user.route';
 import productRoutes from './routes/product.route';
 import addressRoutes from './routes/address.route';
+import orderRoutes from './routes/order.route';
 
 export interface ExpressRequest extends Request {
    user?: IUserDocument;
@@ -20,6 +21,7 @@ dotenv.config();
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/product', productRoutes);
 app.use('/api/v1/address', addressRoutes);
+app.use('/api/v1/order', orderRoutes);
 
 app.get('/', (req, res) => {
    res.send('Hello World!');

@@ -16,14 +16,12 @@ export interface IOrder {
    city: string;
    address: string;
    additional_info?: string;
-   status: IStatus;
-   products: [
-      {
-         product_id: Types.ObjectId;
-         product_name: string;
-         quantity: number;
-      },
-   ];
+   status?: IStatus;
+   products: {
+      product_id: Types.ObjectId;
+      product_name: string;
+      quantity: number;
+   }[];
    total_price: number;
 }
 

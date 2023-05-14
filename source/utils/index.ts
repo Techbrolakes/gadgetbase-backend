@@ -5,6 +5,31 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 class UtilsFunc {
+   // Throw error if value is undefined
+   public static generateRef({ length }: { length: number }) {
+      let result = '';
+      let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let charactersLength = characters.length;
+      for (let i = 0; i < length; i++) {
+         result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return result;
+   }
+
+   // Generate Transaction Reference
+   public static generateTXRef() {
+      const prefix = 'GADGETBASE_TX_REF';
+      const key = prefix + this.generateRef({ length: 12 });
+      return key.toUpperCase();
+   }
+
+   // Generate Transaction Hash
+   public static generateTXHash() {
+      const prefix = 'GADGETBASE_HASH_REF';
+      const key = prefix + this.generateRef({ length: 12 });
+      return key.toUpperCase();
+   }
+
    // Generate OTP
    public static generateOtp = async ({ user_id }: { user_id: Types.ObjectId }) => {
       const otp = Math.floor(Math.random() * 8999 + 1000);

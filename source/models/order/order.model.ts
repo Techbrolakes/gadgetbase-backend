@@ -11,10 +11,10 @@ export const OrderSchema: Schema = new Schema(
       city: { type: String, required: true },
       address: { type: String, required: true },
       additional_info: { type: String },
-      status: { type: String, enum: Object.values(IStatus), required: true },
+      status: { type: String, enum: Object.values(IStatus), required: true, default: IStatus.pending },
       products: [
          {
-            product_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+            product_id: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
             product_name: { type: String, required: true },
             quantity: { type: Number, required: true },
          },
