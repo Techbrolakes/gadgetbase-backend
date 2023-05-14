@@ -34,7 +34,7 @@ const createNewOrder = async (data) => {
             products: orderProducts,
             total_price,
             status: order_interface_1.IStatus.pending,
-            session,
+            session: data.session,
         });
         return {
             success: true,

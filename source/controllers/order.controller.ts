@@ -54,7 +54,7 @@ export const createNewOrder = async (data: any): Promise<any> => {
          products: orderProducts,
          total_price,
          status: IStatus.pending,
-         session,
+         session: data.session,
       });
 
       return {
