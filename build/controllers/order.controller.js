@@ -14,7 +14,7 @@ const order_service_1 = __importDefault(require("../services/order.service"));
 const order_interface_1 = require("../interfaces/order/order.interface");
 const createNewOrder = async (data) => {
     try {
-        const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products } = data;
+        const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products, session } = data;
         const orderProducts = [];
         for (const product of products) {
             const { product_id, product_name, quantity } = product;
@@ -34,6 +34,7 @@ const createNewOrder = async (data) => {
             products: orderProducts,
             total_price,
             status: order_interface_1.IStatus.pending,
+            session,
         });
         return {
             success: true,

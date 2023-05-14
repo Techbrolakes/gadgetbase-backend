@@ -24,7 +24,7 @@ import { IStatus } from '../interfaces/order/order.interface';
 // Create New Order
 export const createNewOrder = async (data: any): Promise<any> => {
    try {
-      const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products } = data;
+      const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products, session } = data;
 
       const orderProducts: {
          product_id: Types.ObjectId;
@@ -54,6 +54,7 @@ export const createNewOrder = async (data: any): Promise<any> => {
          products: orderProducts,
          total_price,
          status: IStatus.pending,
+         session,
       });
 
       return {

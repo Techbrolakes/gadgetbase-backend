@@ -47,6 +47,7 @@ const paystackWebhook = async (req, res) => {
                         address: data.metadata.address,
                         total_price: data.metadata.total_price,
                         products: data.metadata.products,
+                        session,
                     };
                     const result = await (0, order_controller_1.createNewOrder)(payload);
                     if (!result.success) {

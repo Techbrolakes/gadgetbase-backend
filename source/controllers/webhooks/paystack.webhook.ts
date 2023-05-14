@@ -54,6 +54,7 @@ export const paystackWebhook = async (req: ExpressRequest, res: Response) => {
                   address: data.metadata.address,
                   total_price: data.metadata.total_price,
                   products: data.metadata.products,
+                  session,
                };
 
                const result = await createNewOrder(payload);

@@ -16,10 +16,13 @@ class OrderService {
       user_id,
       additional_info,
       additional_phone_number,
-   }: IOrder): Promise<IOrderDocument | null> {
+      session,
+   }: IOrder): Promise<IOrderDocument | null | any> {
       const data = { address, city, first_name, last_name, phone_number, products, status, total_price, user_id, additional_info, additional_phone_number };
 
-      return await Order.create(data);
+      const newOrder = await Order.create([data], { session });
+
+      return newOrder;
    }
 }
 

@@ -23,6 +23,7 @@ export interface IOrder {
       quantity: number;
    }[];
    total_price: number;
+   session?: any;
 }
 
 export interface IOrderDocument extends IOrder, Document {}
