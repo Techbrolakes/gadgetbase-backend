@@ -27,8 +27,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const auth_middleware_1 = __importDefault(require("../middlewares/auth.middleware"));
 const paystackWebhookControllers = __importStar(require("../controllers/webhooks/paystack.webhook"));
 const router = express_1.default.Router();
-router.post('/paystack', auth_middleware_1.default, paystackWebhookControllers.paystackWebhook);
+router.post('/paystack', paystackWebhookControllers.paystackWebhook);
 exports.default = router;
