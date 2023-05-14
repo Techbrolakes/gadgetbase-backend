@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Order = exports.Address = exports.ProductCategory = exports.Product = exports.User = exports.Otp = void 0;
+const mongoose_1 = require("mongoose");
+const user_model_1 = require("./user.model");
+const otp_model_1 = require("./otp.model");
+const product_model_1 = require("./product/product.model");
+const product_category_model_1 = require("./product/product-category.model");
+const address_model_1 = require("./address/address.model");
+const order_model_1 = require("./order/order.model");
+exports.Otp = (0, mongoose_1.model)('Otps', otp_model_1.OtpSchema);
+exports.User = (0, mongoose_1.model)('Users', user_model_1.UserSchema);
+exports.Product = (0, mongoose_1.model)('Products', product_model_1.ProductSchema);
+exports.ProductCategory = (0, mongoose_1.model)('ProductCategories', product_category_model_1.ProductCategorySchema);
+exports.Address = (0, mongoose_1.model)('Addresses', address_model_1.AddressSchema);
+exports.Order = (0, mongoose_1.model)('Orders', order_model_1.OrderSchema);
