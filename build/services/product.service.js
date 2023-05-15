@@ -61,6 +61,10 @@ class ProductService {
     async atomicUpdate(product_id, record) {
         return models_1.Product.findOneAndUpdate({ _id: product_id }, { ...record }, { new: true });
     }
+    async updateProductQuantities(productQuantities) {
+        const updateOperations = productQuantities.map(({ product_id, quantity }) => models_1.Product.findOneAndUpdate({ _id: product_id }, { $inc: { product_quantity: -quantity } }, { new: true }));
+        return Promise.all(updateOperations);
+    }
     async deleteProduct(product_id) {
         return await models_1.Product.findByIdAndDelete({ _id: product_id });
     }

@@ -31,4 +31,5 @@ const auth_middleware_1 = __importDefault(require("../middlewares/auth.middlewar
 const OrderControllers = __importStar(require("../controllers/order.controller"));
 const router = express_1.default.Router();
 router.post('/create', auth_middleware_1.default, OrderControllers.createPaymentService);
+router.post('/pay-on-delivery', auth_middleware_1.default, OrderControllers.payOnDelivery);
 exports.default = router;

@@ -26,21 +26,11 @@ export const createNewOrder = async (data: any): Promise<any> => {
    try {
       const { first_name, last_name, phone_number, user_id, additional_phone_number, additional_info, city, address, total_price, products } = data;
 
-      const orderProducts: {
-         product_id: Types.ObjectId;
-         product_name: string;
-         quantity: number;
-      }[] = [];
-
-      // loop through products array and create product object for order
-      for (const product of products) {
-         const { product_id, product_name, quantity } = product;
-         const orderProduct = { product_id, product_name, quantity };
-         orderProducts.push(orderProduct);
-
-         // update product quantity in database
-         await productService.atomicUpdate(product_id, { $inc: { quantity: -quantity } });
-      }
+      const orderProducts = products.map((product: any) => ({
+         product_id: new Types.ObjectId(product.product_id),
+         product_name: product.product_name,
+         quantity: product.quantity,
+      }));
 
       const order = await orderService.createOrder({
          user_id: user_id,
@@ -53,9 +43,10 @@ export const createNewOrder = async (data: any): Promise<any> => {
          address: address,
          products: orderProducts,
          total_price: total_price,
-         status: IStatus.pending,
          session: data.session,
       });
+
+      await productService.updateProductQuantities(products);
 
       return {
          success: true,
@@ -64,6 +55,55 @@ export const createNewOrder = async (data: any): Promise<any> => {
       };
    } catch (error) {
       console.log(error);
+   }
+};
+
+// PAY ON DELIVERY
+export const payOnDelivery = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      const { first_name, last_name, phone_number, additional_phone_number, additional_info, city, address, total_price, products } = req.body;
+
+      const getUser = await userService.getById({ _id: user._id });
+
+      if (!getUser) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
+      }
+
+      const orderProducts = products.map((product: any) => ({
+         product_id: new Types.ObjectId(product.product_id),
+         product_name: product.product_name,
+         quantity: product.quantity,
+      }));
+
+      const order = await orderService.createOrder({
+         user_id: user._id,
+         first_name,
+         last_name,
+         phone_number,
+         additional_phone_number,
+         additional_info,
+         city,
+         address,
+         products: orderProducts,
+         total_price,
+      });
+
+      await productService.updateProductQuantities(products);
+
+      return ResponseHandler.sendSuccessResponse({
+         res,
+         code: HTTP_CODES.OK,
+         message: 'Order created successfully',
+         data: order,
+      });
+   } catch (error) {
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
    }
 };
 

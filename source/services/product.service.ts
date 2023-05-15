@@ -82,6 +82,14 @@ class ProductService {
       return Product.findOneAndUpdate({ _id: product_id }, { ...record }, { new: true });
    }
 
+   // Update Products
+   public async updateProductQuantities(productQuantities: { product_id: Types.ObjectId; quantity: number }[]) {
+      const updateOperations = productQuantities.map(({ product_id, quantity }) =>
+         Product.findOneAndUpdate({ _id: product_id }, { $inc: { product_quantity: -quantity } }, { new: true }),
+      );
+      return Promise.all(updateOperations);
+   }
+
    // Find By Product Category Name
    public getByCategoryName = async ({ category_name, leanVersion = true }: { category_name: string; leanVersion?: boolean }): Promise<IProductCategoryDocument> => {
       return await ProductCategory.findOne({ category_name }).lean(leanVersion);
