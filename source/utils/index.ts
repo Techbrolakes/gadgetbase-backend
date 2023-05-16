@@ -2,6 +2,8 @@ import { Types } from 'mongoose';
 import otpService from '../services/otp.service';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+// import path from 'path';
+// const Email = require('keystone-email');
 dotenv.config();
 
 class UtilsFunc {
@@ -15,6 +17,44 @@ class UtilsFunc {
       }
       return result;
    }
+
+   // SEND EMAIL
+   // public static async sendEmail(TEMPLATE: any, { to = [] as any, subject = '', props = {}, attachment = null }) {
+   //    const cb = (err: any, info: any) => {
+   //       if (err) {
+   //          console.log(err, ':=> Error Response =Mailer');
+   //          return false;
+   //       }
+   //       console.log(info, ':=> Info Response = Mailer');
+   //       return true;
+   //    };
+   //    let mailOptions = {
+   //       apiKey: '7f3d10eebc6936ec4c44998fcce538b2-913a5827-fd327ddb',
+   //       domain: 'sandboxd35f84cbdf884016890947758e677c8f.mailgun.org',
+   //       to: to,
+   //       from: {
+   //          name: 'GadgetBase',
+   //          email: 'lekandar11@gmail.com',
+   //       },
+   //       subject: subject,
+   //       attachment,
+   //    };
+
+   //    return new Email(path.join(__dirname, `../views/${TEMPLATE}`), {
+   //       transport: 'mailgun',
+   //    }).send(
+   //       { ...props },
+   //       mailOptions,
+   //       function (err: any, result: any) {
+   //          if (err) {
+   //             console.log('🤕 Mailgun test failed with error:\n', err);
+   //          } else {
+   //             console.log('📬 Successfully sent Mailgun test with result:\n', result);
+   //          }
+   //       },
+   //       cb,
+   //    );
+   // }
 
    // Generate Transaction Reference
    public static generateTXRef() {

@@ -1,10 +1,10 @@
 import { Response } from 'express';
 import { ExpressRequest } from '../server';
-import { IRegister, IVerifyMail } from '../interfaces/user.interface';
+import { IRegister } from '../interfaces/user.interface';
 import ResponseHandler from '../utils/response-handler';
 import userService from '../services/user.service';
 import UtilsFunc from '../utils';
-import { sendPasswordRecoveryEmail, sendWelcomeEmail } from '../services/mail.service';
+import mailService from '../services/mail.service';
 import otpService from '../services/otp.service';
 import bcrypt from 'bcrypt';
 
@@ -92,9 +92,7 @@ export const recoverPassword = async (req: ExpressRequest, res: Response): Promi
 
       const otp = await UtilsFunc.generateOtp({ user_id: user._id });
 
-      console.log(otp?.otp);
-
-      await sendPasswordRecoveryEmail({
+      await mailService.verifyOtpMail({
          email: user.email,
          name: user.first_name,
          otp: otp?.otp,
@@ -171,14 +169,6 @@ export const resendVerification = async (req: ExpressRequest, res: Response): Pr
       // generate otp
       const otp = await UtilsFunc.generateOtp({ user_id: user._id });
 
-      // send otp to user
-      await sendWelcomeEmail({
-         email: user.email,
-         name: user.first_name,
-         otp: otp?.otp,
-         subject: 'Welcome to GadgetBase',
-      });
-
       // return success response
       return ResponseHandler.sendSuccessResponse({
          message: `A verification mail has been sent to ${user.email}`,
@@ -216,6 +206,12 @@ export const registerUser = async (req: ExpressRequest, res: Response): Promise<
          email: user.email,
          first_name: user.first_name,
          last_name: user.last_name,
+      });
+
+      await mailService.welcomeEmail({
+         email: email,
+         name: first_name,
+         subject: 'Welcome to GadgetBase',
       });
 
       const data = {

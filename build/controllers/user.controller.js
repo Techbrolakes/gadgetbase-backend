@@ -7,7 +7,7 @@ exports.registerUser = exports.resendVerification = exports.loginUser = exports.
 const response_handler_1 = __importDefault(require("../utils/response-handler"));
 const user_service_1 = __importDefault(require("../services/user.service"));
 const utils_1 = __importDefault(require("../utils"));
-const mail_service_1 = require("../services/mail.service");
+const mail_service_1 = __importDefault(require("../services/mail.service"));
 const otp_service_1 = __importDefault(require("../services/otp.service"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const resetPassword = async (req, res) => {
@@ -69,8 +69,7 @@ const recoverPassword = async (req, res) => {
         if (!user)
             return response_handler_1.default.sendErrorResponse({ res, code: 404, error: 'Email does not exist' });
         const otp = await utils_1.default.generateOtp({ user_id: user._id });
-        console.log(otp?.otp);
-        await (0, mail_service_1.sendPasswordRecoveryEmail)({
+        await mail_service_1.default.verifyOtpMail({
             email: user.email,
             name: user.first_name,
             otp: otp?.otp,
@@ -122,12 +121,6 @@ const resendVerification = async (req, res) => {
         if (!user)
             return response_handler_1.default.sendErrorResponse({ res, code: 404, error: 'Email not found. Please enter a valid email address.' });
         const otp = await utils_1.default.generateOtp({ user_id: user._id });
-        await (0, mail_service_1.sendWelcomeEmail)({
-            email: user.email,
-            name: user.first_name,
-            otp: otp?.otp,
-            subject: 'Welcome to GadgetBase',
-        });
         return response_handler_1.default.sendSuccessResponse({
             message: `A verification mail has been sent to ${user.email}`,
             code: 201,
@@ -157,6 +150,11 @@ const registerUser = async (req, res) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
+        });
+        await mail_service_1.default.welcomeEmail({
+            email: email,
+            name: first_name,
+            subject: 'Welcome to GadgetBase',
         });
         const data = {
             token,

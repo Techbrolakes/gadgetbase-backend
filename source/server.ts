@@ -1,4 +1,5 @@
 import express, { Request } from 'express';
+import path from 'path';
 import dotenv from 'dotenv';
 import connectDB from './config/conn';
 import cors from 'cors';
@@ -18,6 +19,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 dotenv.config();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
+app.disable('x-powered-by');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/product', productRoutes);

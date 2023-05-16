@@ -3,7 +3,6 @@ import { Document, Types } from 'mongoose';
 export enum IStatus {
    pending = 'pending',
    processing = 'processing',
-   shipped = 'shipped',
    delivered = 'delivered',
 }
 

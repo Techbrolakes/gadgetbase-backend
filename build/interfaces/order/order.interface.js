@@ -5,6 +5,5 @@ var IStatus;
 (function (IStatus) {
     IStatus["pending"] = "pending";
     IStatus["processing"] = "processing";
-    IStatus["shipped"] = "shipped";
     IStatus["delivered"] = "delivered";
 })(IStatus = exports.IStatus || (exports.IStatus = {}));

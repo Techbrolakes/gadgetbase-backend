@@ -21,6 +21,153 @@ import { IStatus } from '../interfaces/order/order.interface';
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
+// Change Order Status
+export const changeOrderStatus = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const { status } = req.body;
+
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      const order_id = new Types.ObjectId(req.params.order_id);
+
+      // check if user exists
+      const getUser = await userService.getById({ _id: user._id });
+
+      // When user does not exist
+      if (!getUser) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
+      }
+
+      await orderService.atomicUpdate(order_id, {
+         $set: { status: status },
+      });
+
+      // Return success response
+      ResponseHandler.sendSuccessResponse({
+         res,
+         message: `Order ${status}`,
+      });
+   } catch (error) {
+      //  Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+// Get Total Orders
+export const getOrderStats = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      // check if user exists
+      const getUser = await userService.getById({ _id: user._id });
+
+      // When user does not exist
+      if (!getUser) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
+      }
+
+      const order = await orderService.findAll();
+
+      const totalOrders = order.length;
+
+      const pendingOrders = order.filter((order: any) => order.status === IStatus.pending);
+
+      const processingOrders = order.filter((order: any) => order.status === IStatus.processing);
+
+      const deliveredOrders = order.filter((order: any) => order.status === IStatus.delivered);
+
+      const totalAmount = order.reduce((acc: any, order: any) => {
+         if (order.status === 'delivered') {
+            return acc + order.total_price;
+         }
+         return acc;
+      }, 0);
+
+      // Return success response
+      ResponseHandler.sendSuccessResponse({
+         res,
+         message: 'Orders Stats retrieved successfully',
+         data: {
+            total_orders: totalOrders,
+            pending_orders: pendingOrders.length,
+            processing_orders: processingOrders.length,
+            delivered_orders: deliveredOrders.length,
+            total_amount: totalAmount,
+         },
+      });
+   } catch (error) {
+      //  Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+// Get User Orders
+export const getUserOrders = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      // check if user exists
+      const getUser = await userService.getById({ _id: user._id });
+
+      // When user does not exist
+      if (!getUser) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
+      }
+      const order = await orderService.getAllUserOrders(req);
+
+      // Return success response
+      ResponseHandler.sendSuccessResponse({
+         res,
+         message: 'User order retrieved successfully',
+         data: order,
+      });
+   } catch (error) {
+      //  Return error response
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
+// Get All Orders
+export const getAllOrders = async (req: ExpressRequest, res: Response): Promise<Response | void> => {
+   try {
+      const user = UtilsFunc.throwIfUndefined(req.user, 'req.user');
+
+      // check if user exists
+      const getUser = await userService.getById({ _id: user._id });
+
+      // When user does not exist
+      if (!getUser) {
+         return ResponseHandler.sendErrorResponse({ res, code: 404, error: 'User does not exist' });
+      }
+      const order = await orderService.getAll(req);
+
+      // Return success response
+      ResponseHandler.sendSuccessResponse({
+         res,
+         message: 'User order retrieved successfully',
+         data: order,
+      });
+   } catch (error) {
+      ResponseHandler.sendErrorResponse({
+         code: HTTP_CODES.INTERNAL_SERVER_ERROR,
+         error: `${error}`,
+         res,
+      });
+   }
+};
+
 // Create New Order
 export const createNewOrder = async (data: any): Promise<any> => {
    try {
